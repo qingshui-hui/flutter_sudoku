@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
 
 import 'IndexPage.dart';
-import 'ProblemBoardCell.dart';
-import 'Api.dart';
+import '../ProblemBoardCell.dart';
+import '../Api.dart';
 
 class BoardPage extends StatefulWidget {
   BoardPage({Key key, this.title, this.problem}) : super(key: key);

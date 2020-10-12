@@ -2,14 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'BoardPage.dart';
-import 'Problem.dart';
+import '../Problem.dart';
 
 class IndexPage extends StatelessWidget {
-  var problems;
+  final problems;
 
-  IndexPage(problems) {
-    this.problems = problems;
-  }
+  IndexPage(this.problems);
 
   @override
   Widget build(BuildContext context) {
