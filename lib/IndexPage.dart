@@ -5,6 +5,12 @@ import 'BoardPage.dart';
 import 'Problem.dart';
 
 class IndexPage extends StatelessWidget {
+  var problems;
+
+  IndexPage(problems) {
+    this.problems = problems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,7 +21,7 @@ class IndexPage extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           mainAxisSize: MainAxisSize.min,
-          children: ["1", "2"].map<Widget>((code) {
+          children: problems.map<Widget>((problem) {
             return Container(
               margin: EdgeInsets.only(left: 20),
               width: 40,
@@ -24,14 +30,16 @@ class IndexPage extends StatelessWidget {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => BoardPage(
-                        title: 'Problem $code',
-                        problem: Problem.get(code),
-                      ),
+                      builder: (context) {
+                        return BoardPage(
+                          title: 'Problem ${problem['key']}',
+                          problem: Problem.makeProblemData(problem['nums']),
+                        );
+                      },
                     ),
                   );
                 },
-                child: Text(code),
+                child: Text(problem['key']),
               ),
             );
           }).toList(),

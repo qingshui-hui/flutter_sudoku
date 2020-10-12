@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
-import 'package:http/http.dart' as http;
 
 import 'IndexPage.dart';
 import 'ProblemBoardCell.dart';
@@ -48,6 +47,11 @@ class _BoardPageState extends State<BoardPage> {
     });
   }
 
+  fetchProblems() async {
+    var problems = await Api.fetchProblemList();
+    return problems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,73 +59,76 @@ class _BoardPageState extends State<BoardPage> {
         title: Text(widget.title),
         actions: [
           FlatButton(
-            onPressed: () {
+            onPressed: () async {
+              var problems = await fetchProblems();
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => IndexPage()),
+                MaterialPageRoute(builder: (context) => IndexPage(problems)),
               );
             },
             child: Text('PL'),
           )
         ],
       ),
-      body: Column(children: [
-        Container(
-          margin: EdgeInsets.only(top: 30, bottom: 30),
-          child: Column(
-            children: problem
-                .map<Widget>((problemRow) => Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: problemRow
-                          .map<Widget>((cell) => GestureDetector(
-                                onTap: () {
-                                  _selectCell(cell['index']);
-                                },
-                                child: ProblemBoardCell(
-                                  index: cell['index'],
-                                  number: cell['number'],
-                                  selected: ListEquality().equals(
-                                    selectedCellIndex,
-                                    List<int>.from(cell['index']),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          Container(
+            margin: EdgeInsets.only(top: 30, bottom: 30),
+            child: Column(
+              children: problem
+                  .map<Widget>((problemRow) => Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: problemRow
+                            .map<Widget>((cell) => GestureDetector(
+                                  onTap: () {
+                                    _selectCell(cell['index']);
+                                  },
+                                  child: ProblemBoardCell(
+                                    index: cell['index'],
+                                    number: cell['number'],
+                                    selected: ListEquality().equals(
+                                      selectedCellIndex,
+                                      List<int>.from(cell['index']),
+                                    ),
                                   ),
-                                ),
-                              ))
-                          .toList(),
-                    ))
-                .toList(),
+                                ))
+                            .toList(),
+                      ))
+                  .toList(),
+            ),
           ),
-        ),
-        Container(
-          margin: EdgeInsets.only(bottom: 5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [for (var i = 0; i < 10; i += 1) i].map((number) {
-              return SizedBox(
-                width: 30,
-                child: FlatButton(
+          Container(
+            margin: EdgeInsets.only(bottom: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [for (var i = 0; i < 10; i += 1) i].map((number) {
+                return SizedBox(
+                  width: 30,
+                  child: FlatButton(
+                    onPressed: () {
+                      _putNumberOnCell(number);
+                    },
+                    child: Text(number.toString()),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          Container(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton(
                   onPressed: () {
-                    _putNumberOnCell(number);
+                    _solve();
                   },
-                  child: Text(number.toString()),
-                ),
-              );
-            }).toList(),
-          ),
-        ),
-        Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FlatButton(
-                onPressed: () {
-                  _solve();
-                },
-                child: Text("Solve"),
-              )
-            ],
-          ),
-        )
-      ]),
+                  child: Text("Solve"),
+                )
+              ],
+            ),
+          )
+        ]),
+      ),
     );
   }
 }

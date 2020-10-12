@@ -12,4 +12,11 @@ class Api {
     var decoded = JsonDecoder().convert(response.body);
     return decoded;
   }
+
+  static fetchProblemList() async {
+    var response = await http.get(
+        'https://ok8zvqc5ti.execute-api.ap-northeast-1.amazonaws.com/prod/get_problems?method=list');
+    var decoded = JsonDecoder().convert(response.body);
+    return decoded;
+  }
 }
