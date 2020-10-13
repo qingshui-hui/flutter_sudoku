@@ -19,7 +19,20 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: BoardPage(title: 'Flutter Demo Sudoku', problem: Problem.get("1")),
+      home: FutureBuilder(
+        future: Api.fetchProblemList(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return BoardPage(
+                title: 'Flutter Demo Sudoku Problem:${snapshot.data[0]['key']}',
+                problem: Problem.makeProblemData(snapshot.data[0]['nums']));
+          } else if (snapshot.connectionState != ConnectionState.done) {
+            return CircularProgressIndicator();
+          } else {
+            return Text("データが存在しません");
+          }
+        },
+      ),
     );
   }
 }
